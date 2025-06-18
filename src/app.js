@@ -15,6 +15,8 @@ import courseRouter from './routes/course.routes.js';
 import gradeRouter from './routes/grade.routes.js';
 import attendanceRouter from './routes/attendance.routes.js';
 import timetableRouter from './routes/timetable.routes.js';
+import assignmentRouter from "./routes/assignment.routes.js";
+import submissionRouter from "./routes/submission.routes.js";
 
 dotenv.config({
   path: "../.env",
@@ -113,6 +115,8 @@ app.use("/api/v1/courses", courseRouter);
 app.use("/api/v1/grades", gradeRouter);
 app.use("/api/v1/attendance", attendanceRouter);
 app.use("/api/v1/timetable", timetableRouter);
+app.use("/api/v1/assignments", assignmentRouter);
+app.use("/api/v1/submissions", submissionRouter);
 
 
 
