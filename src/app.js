@@ -11,6 +11,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import session from "express-session";
 import studentRouter from './routes/student.routes.js';
+import courseRouter from './routes/course.routes.js';
 
 dotenv.config({
   path: "../.env",
@@ -105,6 +106,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 // routes
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/students", studentRouter);
+app.use("/api/v1/courses", courseRouter);
 
 
 
