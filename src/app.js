@@ -17,6 +17,7 @@ import attendanceRouter from './routes/attendance.routes.js';
 import timetableRouter from './routes/timetable.routes.js';
 import assignmentRouter from "./routes/assignment.routes.js";
 import submissionRouter from "./routes/submission.routes.js";
+import feeRouter from './routes/fee.routes.js';
 
 dotenv.config({
   path: "../.env",
@@ -117,6 +118,7 @@ app.use("/api/v1/attendance", attendanceRouter);
 app.use("/api/v1/timetable", timetableRouter);
 app.use("/api/v1/assignments", assignmentRouter);
 app.use("/api/v1/submissions", submissionRouter);
+app.use("/api/v1/fees", feeRouter);
 
 
 
