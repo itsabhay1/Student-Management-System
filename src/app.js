@@ -12,6 +12,7 @@ import jwt from "jsonwebtoken";
 import session from "express-session";
 import studentRouter from './routes/student.routes.js';
 import courseRouter from './routes/course.routes.js';
+import gradeRouter from './routes/grade.routes.js';
 
 dotenv.config({
   path: "../.env",
@@ -107,6 +108,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/students", studentRouter);
 app.use("/api/v1/courses", courseRouter);
+app.use("/api/v1/grades", gradeRouter);
 
 
 
