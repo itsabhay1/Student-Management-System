@@ -10,6 +10,7 @@ import userRouter from './routes/user.routes.js';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import session from "express-session";
+import studentRouter from './routes/student.routes.js';
 
 dotenv.config({
   path: "../.env",
@@ -96,10 +97,16 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api/v1/users", userRouter);
-
+// google auth 
 app.get('/auth/google', googleAuth);
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), googleAuthCallback);
+
+
+// routes
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/students", studentRouter);
+
+
 
 app.get('/', (req, res) => {
     res.send("Server is live");
