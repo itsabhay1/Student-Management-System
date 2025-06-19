@@ -29,7 +29,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const imageFile = req.files["image"] ? req.files["image"][0] : null;
 
     //taking user details from frontend
-    const { fullName, email, username, password } = req.body
+    const { fullName, email, username, password, role } = req.body;
 
     if (!(fullName || email || username || password)) {
         return res.status(403).json({ msg: "All fields are required" })
@@ -60,7 +60,8 @@ const registerUser = asyncHandler(async (req, res) => {
         image: uploadResponse?.url || "",
         email,
         password,
-        username
+        username,
+        role: role || "student"
     })
 
     //removing password and refreshToken
