@@ -16,13 +16,27 @@ export const assignGrade = asyncHandler(async (req, res) => {
 
 // Update grade by admin/teacher
 export const updateGrade = asyncHandler(async (req, res) => {
-    const updated = await Grade.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-    });
+  const gradeId = req.params.id;
+  const { score } = req.body;
 
-    if (!updated) throw new ApiError(404, "Grade not found");
-    res.status(200).json(new ApiResponse(200, updated, "Grade updated"));
+  const gradeDoc = await Grade.findById(gradeId);
+  if (!gradeDoc) throw new ApiError(404, "Grade not found");
+
+  // Update score
+  if (score !== undefined) {
+    gradeDoc.score = score;
+
+    // Recalculate letter grade
+    if (score >= 90) gradeDoc.grade = "A+";
+    else if (score >= 80) gradeDoc.grade = "A";
+    else if (score >= 70) gradeDoc.grade = "B";
+    else if (score >= 60) gradeDoc.grade = "C";
+    else gradeDoc.grade = "F";
+  }
+
+  await gradeDoc.save();
+
+  res.status(200).json(new ApiResponse(200, gradeDoc, "Grade updated"));
 });
 
 // get grade of a student by anyone
