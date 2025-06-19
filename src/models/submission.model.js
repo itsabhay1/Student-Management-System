@@ -9,7 +9,7 @@ const submissionSchema = new Schema(
     },
     student: { 
         type: Schema.Types.ObjectId, 
-        ref: "Student", 
+        ref: "User", 
         required: true 
     },
     content: {              // link / text / file path

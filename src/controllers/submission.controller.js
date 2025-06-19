@@ -59,10 +59,9 @@ export const getSubmissionsByAssignment = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid assignment ID");
     }
 
-    const records = await Submission.find({ assignment: assignmentId }).populate(
-        "student",
-        "fullName"
-    );
+    const records = await Submission.find({ assignment: assignmentId })
+        .populate("student", "fullName email username")
+        .populate("assignment", "title dueDate");
 
     if (!records || records.length === 0) {
         throw new ApiError(404, "No submissions found for this assignment");
