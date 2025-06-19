@@ -35,6 +35,22 @@ const registerUser = asyncHandler(async (req, res) => {
         return res.status(403).json({ msg: "All fields are required" })
     }
 
+    let assignedRole = role?.toLowerCase();
+
+    if (!assignedRole) {
+        assignedRole = "admin"; // default if not provided
+    }
+
+    // Block student signup
+    if (assignedRole === "student") {
+        throw new ApiError(403, "Students cannot register themselves. Contact admin.");
+    }
+
+    // Validate allowed roles
+    if (!["admin", "teacher"].includes(assignedRole)) {
+        throw new ApiError(400, "Invalid role. Only 'admin' or 'teacher' allowed.");
+    }
+
     //uploading image to cloudinary
     let uploadResponse;
     if (imageFile) {
@@ -61,7 +77,8 @@ const registerUser = asyncHandler(async (req, res) => {
         email,
         password,
         username,
-        role: role || "student"
+        role: assignedRole,
+        is_verified: true
     })
 
     //removing password and refreshToken
@@ -213,14 +230,14 @@ const googleAuthCallback = asyncHandler(async (req, res) => {
         if (!req.user) {
             console.log("User  in googleAuthCallback:", req.user);
             throw new ApiError(401, "Authentication failed"); // Handle case where user is not found
-          }
+        }
         // Successful authentication, generate tokens and return response
         const { user, accessToken, refreshToken } = req.user; // This comes from the passport callback
         const options = {
             httpOnly: true,
             secure: true
         };
-    
+
         return res.status(200)
             .cookie("accessToken", accessToken, options)
             .cookie("refreshToken", refreshToken, options)

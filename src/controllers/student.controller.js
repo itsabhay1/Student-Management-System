@@ -2,14 +2,34 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { Student } from "../models/student.model.js";
+import { User } from "../models/user.model.js";
 
 // Create a new student (admin only)
 export const createStudent = asyncHandler(async (req, res) => {
   const { fullName, rollNumber, email, course, year, section } = req.body;
 
+  // Check if student or user already exists
   const exists = await Student.findOne({ rollNumber });
   if (exists) throw new ApiError(409, "Roll number already exists");
 
+  const existingUser = await User.findOne({ email });
+  if (existingUser) throw new ApiError(409, "User already exists for this email");
+
+  // Generate password: firstName@rollNumber
+  const firstName = fullName.trim().split(" ")[0].toLowerCase();
+  const password = `${firstName}@${rollNumber}`;
+
+  // Create user account with role "student"
+  const user = await User.create({
+    fullName,
+    email,
+    username: email.split("@")[0],
+    password,
+    role: "student",
+    is_verified: true
+  });
+
+  // Create student record and link user
   const student = await Student.create({
     fullName,
     rollNumber,
@@ -17,10 +37,19 @@ export const createStudent = asyncHandler(async (req, res) => {
     course,
     year,
     section,
-    user: req.user._id
+    user: user._id
   });
 
-  res.status(201).json(new ApiResponse(201, student, "Student created"));
+  res.status(201).json(
+    new ApiResponse(201, {
+      student,
+      loginCredentials: {
+        email: user.email,
+        username: user.username,
+        password: `Generated as: firstname@rollnumber`
+      }
+    }, "Student created and login account generated")
+  );
 });
 
 // Get all students
